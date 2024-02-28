@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  gap: 3rem;
+  margin: 3rem 0;
+  padding: 0 3rem;
+  @media screen and (max-width: 1024px) {
+    gap: 1rem;
+  }
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
+  @media screen and (max-width: 468px) {
+    gap: 0.5rem;
+  }
+}
