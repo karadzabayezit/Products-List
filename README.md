@@ -1,5 +1,9 @@
 # React + Vite
 
+PROJECT FOR TESTING
+
+https://karadzabayezit.github.io/Products-List/
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
