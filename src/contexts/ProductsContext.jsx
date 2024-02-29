@@ -139,36 +139,36 @@ const ProductsProvider = ({ children }) => {
     }
   }
 
-  function filterList(filterType, value) {
+  const filterList = (filterType, value) => {
     dispatch({ type: `products/filterBy${filterType}`, payload: value });
-  }
-  function searchProducts() {
+  };
+  const searchProducts = () => {
     if (filterBy.brand.length > 0) return getFilteredProductsByID('brand');
     if (filterBy.price > 0) return getFilteredProductsByID('price');
     if (filterBy.product.length > 0) return getFilteredProductsByID('product');
-  }
-  function resetFilters() {
+  };
+  const resetFilters = () => {
     if (products.length === 0) return getProductsByID();
     dispatch({ type: 'products/reset' });
-  }
-  function changePageQuery(value) {
+  };
+  const changePageQuery = (value) => {
     const { protocol, host, pathname } = location;
     const path = `${host + pathname}`;
     if (history.pushState) {
       const newUrl = `${protocol}//${path}?page=${value}`;
       history.pushState({ path: newUrl }, '', newUrl);
     }
-  }
-  function nextPage() {
+  };
+  const nextPage = () => {
     changePageQuery(currentPage + 1);
     dispatch({ type: 'products/nextPage' });
-  }
-  function previousPage() {
+  };
+  const previousPage = () => {
     if (currentPage > 0) {
       changePageQuery(currentPage - 1);
       dispatch({ type: 'products/previousPage' });
     }
-  }
+  };
 
   useEffect(() => {
     getProductsByID();

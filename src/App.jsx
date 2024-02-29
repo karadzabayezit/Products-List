@@ -1,6 +1,6 @@
 //COMPONENTS
 import Filters from './components/Filters';
-import ProductList from './components/ProductsList';
+import ProductsList from './components/ProductsList';
 import Pagination from './components/PaginationField';
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <>
       <h1>Products List</h1>
       <Filters />
-      <ProductList />
+      <ProductsList />
       <Pagination />
     </>
   );

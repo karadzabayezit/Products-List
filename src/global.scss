@@ -53,10 +53,17 @@ input {
     margin: 0;
   }
 }
+h1 {
+  font-size: 3rem;
+}
 h1,
 button {
   text-transform: uppercase;
   border: none;
+}
+#root {
+  max-width: 1480px;
+  margin: 1rem auto;
 }
 //SCROLLBAR:
 ::-webkit-scrollbar {

@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useProducts } from '../../../contexts/ProductsContext';
 
 import styles from './styles.module.scss';
