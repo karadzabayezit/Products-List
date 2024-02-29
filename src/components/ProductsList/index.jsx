@@ -1,5 +1,5 @@
 import { useProducts } from '../../contexts/ProductsContext';
-import { styles } from './styles.module.scss';
+import styles from './styles.module.scss';
 import ProductItem from './ProductsItem';
 import Loader from '../Loader';
 import Error from '../Error';
