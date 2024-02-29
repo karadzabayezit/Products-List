@@ -1,7 +1,6 @@
 .productItem {
   padding: 3rem;
-  width: fit-content;
-  max-width: 30rem;
+  width: 30rem;
   border: 1px solid var(--blueGray-dot4);
   border-radius: 5px;
   font-size: 1.5rem;
@@ -9,7 +8,7 @@
     margin-top: 1rem;
   }
   @media screen and (max-width: 767px) {
-    max-width: 25rem;
+    width: 25rem;
     padding: 2.5rem;
   }
 }

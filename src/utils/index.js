@@ -10,7 +10,7 @@ function getMD5Hash(PASSWORD) {
 }
 
 function removeDuplicates(arr) {
-  return arr.filter((item, index, self) => index === self.findIndex((t) => t.id === item.id));
+  return arr.filter((item, index, self) => index === self.findIndex((el) => el.id === item.id));
 }
 
 export { getMD5Hash, removeDuplicates };

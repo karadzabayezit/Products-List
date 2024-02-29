@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
-import axios from 'axios';
-import { getMD5Hash, removeDuplicates } from '../utils';
+import { removeDuplicates } from '../utils';
+import axios from '../middleware/axios';
 
 const INITIAL_STATE = {
   products: [],
@@ -14,8 +14,7 @@ const INITIAL_STATE = {
     price: '',
   },
 };
-const PASSWORD = 'Valantis';
-const API_URL = 'https://api.valantis.store:41000/';
+
 const LIMIT = 50;
 
 const ProductsContext = createContext();
@@ -71,15 +70,9 @@ function reducer(state, action) {
       };
     case 'products/reset':
       return {
-        ...state,
-        filteredProducts: null,
-        filterBy: {
-          product: '',
-          brand: '',
-          price: '',
-        },
-        error: null,
-        isLoading: false,
+        ...INITIAL_STATE,
+        products: [...state.products],
+        currentPage: state.currentPage,
       };
   }
 }
@@ -89,25 +82,20 @@ const ProductsProvider = ({ children }) => {
     reducer,
     INITIAL_STATE
   );
+
   async function getProductsByID() {
     dispatch({ type: 'products/loading' });
     try {
-      const response = await axios.post(
-        API_URL,
-        {
+      const { data } = await axios({
+        data: {
           action: 'get_ids',
           params: {
             offset: (currentPage - 1) * LIMIT,
             limit: LIMIT,
           },
         },
-        {
-          headers: {
-            'X-Auth': getMD5Hash(PASSWORD),
-          },
-        }
-      );
-      const dataIDs = response.data.result;
+      });
+      const dataIDs = data.result;
       getProducts(dataIDs);
     } catch (error) {
       dispatch({ type: 'products/error', payload: error.message });
@@ -115,22 +103,15 @@ const ProductsProvider = ({ children }) => {
   }
   async function getProducts(dataIDs) {
     try {
-      const response = await axios.post(
-        API_URL,
-        {
+      const { data } = await axios({
+        data: {
           action: 'get_items',
           params: {
             ids: dataIDs,
           },
         },
-        {
-          headers: {
-            'X-Auth': getMD5Hash(PASSWORD),
-          },
-        }
-      );
-      const dataProducts = response.data.result;
-      const clearedData = removeDuplicates(dataProducts);
+      });
+      const clearedData = removeDuplicates(data.result);
       if (filterBy.brand || filterBy.product || filterBy.price)
         return dispatch({ type: 'products/filtered', payload: clearedData });
       dispatch({ type: 'products/loaded', payload: clearedData });
@@ -138,25 +119,19 @@ const ProductsProvider = ({ children }) => {
       dispatch({ type: 'products/error', payload: error.message });
     }
   }
-  async function getFilteredProducts(filterType) {
+  async function getFilteredProductsByID(filterType) {
     dispatch({ type: 'products/loading' });
     filterType = filterType.toLowerCase(); // to make sure
     try {
-      const response = await axios.post(
-        API_URL,
-        {
+      const { data } = await axios({
+        data: {
           action: 'filter',
           params: {
             [filterType]: filterBy[filterType],
           },
         },
-        {
-          headers: {
-            'X-Auth': getMD5Hash(PASSWORD),
-          },
-        }
-      );
-      const dataIDs = response.data.result;
+      });
+      const dataIDs = data.result;
       if (dataIDs.length === 0) throw new Error('No Product Found');
       getProducts(dataIDs);
     } catch (error) {
@@ -164,15 +139,16 @@ const ProductsProvider = ({ children }) => {
     }
   }
 
-  function filterList(filter, value) {
-    dispatch({ type: `products/filterBy${filter}`, payload: value });
+  function filterList(filterType, value) {
+    dispatch({ type: `products/filterBy${filterType}`, payload: value });
   }
   function searchProducts() {
-    if (filterBy.brand.length > 0) return getFilteredProducts('brand');
-    if (filterBy.price > 0) return getFilteredProducts('price');
-    if (filterBy.product.length > 0) return getFilteredProducts('product');
+    if (filterBy.brand.length > 0) return getFilteredProductsByID('brand');
+    if (filterBy.price > 0) return getFilteredProductsByID('price');
+    if (filterBy.product.length > 0) return getFilteredProductsByID('product');
   }
   function resetFilters() {
+    if (products.length === 0) return getProductsByID();
     dispatch({ type: 'products/reset' });
   }
   function changePageQuery(value) {

@@ -1,14 +1,16 @@
 import { useProducts } from '../../contexts/ProductsContext';
+
 import Button from '../Button';
+
 import styles from './styles.module.scss';
 
 const Pagination = () => {
   const { products, filteredProducts, isLoading, error, currentPage, nextPage, previousPage } = useProducts();
-  if (isLoading || error || filteredProducts?.length < 49) return;
+  if (isLoading || error || (filteredProducts?.length || products.length) < 45) return;
   return (
     <div className={styles.box}>
       <Button onClick={previousPage}>&larr;</Button>
-      <h3>{currentPage}</h3>
+      <span>{currentPage}</span>
       <Button
         onClick={nextPage}
         type='primary'>
