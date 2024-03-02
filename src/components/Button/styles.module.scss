@@ -3,6 +3,7 @@
   border-radius: 5px;
   transition: 0.2s;
   background-color: var(--blue);
+  height: 45px;
   &:hover {
     transform: translate(0, -0.3rem);
     box-shadow: 0 1rem 2rem var(--blue-dot2);

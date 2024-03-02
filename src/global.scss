@@ -18,6 +18,7 @@
   --gray3: #868e96;
   --gray4: #ced4da;
   --gray6: #e9ecef;
+  --gray7: #f1f3f5;
 }
 *,
 *::after,
@@ -29,13 +30,14 @@
 html,
 body {
   scrollbar-gutter: stable;
+  box-sizing: border-box;
 }
 html {
   font-size: 62.5%;
 }
 
 body {
-  padding: 3rem;
+  padding: 1rem 3rem;
   color: var(--main-color);
   text-align: center;
   scrollbar-gutter: scroll;

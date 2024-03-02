@@ -1,16 +1,14 @@
-//COMPONENTS
 import Filters from './components/Filters';
-import ProductsList from './components/ProductsList';
 import Pagination from './components/PaginationField';
-
+import ProductsList from './components/ProductsList';
+import styles from './styles.module.scss';
 function App() {
   return (
-    <>
-      <h1>Products List</h1>
+    <div className={styles.container}>
       <Filters />
       <ProductsList />
       <Pagination />
-    </>
+    </div>
   );
 }
 

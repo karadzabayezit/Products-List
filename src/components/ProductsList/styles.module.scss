@@ -1,7 +1,12 @@
-.productList {
-  padding: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
+.container {
+  border-radius: 5px;
+  height: 100%;
+  overflow: auto;
+  .productList {
+    padding: 3rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
 }

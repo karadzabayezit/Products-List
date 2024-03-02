@@ -1,24 +1,24 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
-import { removeDuplicates } from '../utils';
+import { Reducer, createContext, useContext, useEffect, useReducer, PropsWithChildren } from 'react';
+import { changePageQuery, removeDuplicates } from '../utils';
 import axios from '../middleware/axios';
+import { DataIDs, IAction, IProductsContext, ISate } from '../types';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: ISate = {
   products: [],
   filteredProducts: null,
   isLoading: false,
   error: null,
-  currentPage: new URLSearchParams(window.location.search).get('page') || 1,
+  currentPage: Number(new URLSearchParams(window.location.search).get('page')) || 1,
   filterBy: {
     product: '',
     brand: '',
-    price: '',
+    price: 0,
   },
 };
+const LIMIT: number = 50;
 
-const LIMIT = 50;
-
-const ProductsContext = createContext();
-function reducer(state, action) {
+const ProductsContext = createContext<IProductsContext | undefined>(undefined);
+const reducer: Reducer<ISate, IAction> = (state, action) => {
   switch (action.type) {
     case 'products/loading':
       return {
@@ -74,15 +74,16 @@ function reducer(state, action) {
         products: [...state.products],
         currentPage: state.currentPage,
       };
+    default:
+      return state;
   }
-}
+};
 
-const ProductsProvider = ({ children }) => {
+const ProductsProvider = ({ children }: PropsWithChildren<{}>) => {
   const [{ products, filteredProducts, isLoading, error, currentPage, filterBy }, dispatch] = useReducer(
     reducer,
     INITIAL_STATE
   );
-
   async function getProductsByID() {
     dispatch({ type: 'products/loading' });
     try {
@@ -98,10 +99,12 @@ const ProductsProvider = ({ children }) => {
       const dataIDs = data.result;
       getProducts(dataIDs);
     } catch (error) {
-      dispatch({ type: 'products/error', payload: error.message });
+      if (error instanceof Error) {
+        dispatch({ type: 'products/error', payload: error.message });
+      }
     }
   }
-  async function getProducts(dataIDs) {
+  async function getProducts(dataIDs: DataIDs[]) {
     try {
       const { data } = await axios({
         data: {
@@ -116,12 +119,13 @@ const ProductsProvider = ({ children }) => {
         return dispatch({ type: 'products/filtered', payload: clearedData });
       dispatch({ type: 'products/loaded', payload: clearedData });
     } catch (error) {
-      dispatch({ type: 'products/error', payload: error.message });
+      if (error instanceof Error) {
+        dispatch({ type: 'products/error', payload: error.message });
+      }
     }
   }
-  async function getFilteredProductsByID(filterType) {
+  async function getFilteredProductsByID(filterType: string) {
     dispatch({ type: 'products/loading' });
-    filterType = filterType.toLowerCase(); // to make sure
     try {
       const { data } = await axios({
         data: {
@@ -135,39 +139,43 @@ const ProductsProvider = ({ children }) => {
       if (dataIDs.length === 0) throw new Error('No Product Found');
       getProducts(dataIDs);
     } catch (error) {
-      dispatch({ type: 'products/error', payload: error.message });
+      if (error instanceof Error) {
+        dispatch({ type: 'products/error', payload: error.message });
+      }
     }
   }
 
-  const filterList = (filterType, value) => {
+  const filterList = (filterType: string, value: string) => {
     dispatch({ type: `products/filterBy${filterType}`, payload: value });
   };
   const searchProducts = () => {
-    if (filterBy.brand.length > 0) return getFilteredProductsByID('brand');
-    if (filterBy.price > 0) return getFilteredProductsByID('price');
-    if (filterBy.product.length > 0) return getFilteredProductsByID('product');
+    if (filterBy.brand.length > 0) {
+      changePageQuery(filterBy.brand);
+      return getFilteredProductsByID('brand');
+    }
+    if (filterBy.price > 0) {
+      changePageQuery(filterBy.price);
+      return getFilteredProductsByID('price');
+    }
+    if (filterBy.product.length > 0) {
+      changePageQuery(filterBy.product);
+      return getFilteredProductsByID('product');
+    }
   };
   const resetFilters = () => {
     if (products.length === 0) return getProductsByID();
     dispatch({ type: 'products/reset' });
+    changePageQuery(currentPage);
   };
-  const changePageQuery = (value) => {
-    const { protocol, host, pathname } = location;
-    const path = `${host + pathname}`;
-    if (history.pushState) {
-      const newUrl = `${protocol}//${path}?page=${value}`;
-      history.pushState({ path: newUrl }, '', newUrl);
-    }
-  };
+
   const nextPage = () => {
     changePageQuery(currentPage + 1);
     dispatch({ type: 'products/nextPage' });
   };
   const previousPage = () => {
-    if (currentPage > 0) {
-      changePageQuery(currentPage - 1);
-      dispatch({ type: 'products/previousPage' });
-    }
+    if (Number(currentPage == 1)) return;
+    changePageQuery(currentPage - 1);
+    dispatch({ type: 'products/previousPage' });
   };
 
   useEffect(() => {

@@ -1,6 +1,12 @@
+import { FC } from 'react';
+import { IProduct } from '../../../types';
+
 import styles from './styles.module.scss';
 
-const ProductItem = ({ product }) => {
+interface IProps {
+  product: IProduct;
+}
+const ProductItem: FC<IProps> = ({ product }) => {
   const { product: name, brand, id, price } = product;
   return (
     <li className={styles.productItem}>

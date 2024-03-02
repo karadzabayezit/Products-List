@@ -1,0 +1,10 @@
+.container {
+  position: relative;
+  background-color: var(--gray7);
+  border-radius: 10px;
+  border: 1px solid var(--gray6);
+  overflow: hidden;
+  height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+}

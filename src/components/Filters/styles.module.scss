@@ -1,13 +1,19 @@
 .wrapper {
   display: flex;
   gap: 3rem;
-  margin: 3rem 0;
-  padding: 0 3rem;
+  padding: 0.5rem 2rem 2rem;
+  align-items: end;
+  box-shadow: 0 0 4rem var(--gray4);
+  border-bottom: 1px solid var(--gray6);
   @media screen and (max-width: 1024px) {
     gap: 1rem;
   }
   @media screen and (max-width: 768px) {
     flex-direction: column;
+    button {
+      width: 100%;
+      margin-top: 1rem;
+    }
   }
   @media screen and (max-width: 468px) {
     gap: 0.5rem;
