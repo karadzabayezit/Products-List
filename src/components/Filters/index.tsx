@@ -10,7 +10,9 @@ const Filters = () => {
   const { searchProducts, filterBy, resetFilters, filterList } = useProducts();
   useEffect(() => {
     const searchOnEnter = (e: KeyboardEvent) => {
-      if (e.code === 'Enter') {
+      console.log(e.code);
+
+      if (e.code === 'Enter' || e.code === 'NumpadEnter') {
         searchProducts();
       }
     };

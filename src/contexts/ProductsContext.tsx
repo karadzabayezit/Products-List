@@ -154,7 +154,7 @@ const ProductsProvider = ({ children }: PropsWithChildren<{}>) => {
       return getFilteredProductsByID('brand');
     }
     if (filterBy.price > 0) {
-      changePageQuery(filterBy.price);
+      changePageQuery(filterBy.price.toString());
       return getFilteredProductsByID('price');
     }
     if (filterBy.product.length > 0) {

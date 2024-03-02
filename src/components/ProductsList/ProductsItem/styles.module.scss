@@ -1,9 +1,10 @@
 .productItem {
   padding: 3rem;
   width: 30rem;
-  border: 1px solid var(--blueGray-dot4);
-  border-radius: 5px;
+  border: 1px solid var(--gray4);
+  border-radius: 7px;
   font-size: 1.5rem;
+  background-color: rgba(255, 255, 253, 0.4);
   p {
     margin-top: 1rem;
   }
