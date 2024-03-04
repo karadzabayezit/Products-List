@@ -4,10 +4,24 @@
   background-color: rgba(255, 255, 253, 0.3);
   overflow: auto;
   .productList {
-    padding: 3rem 1rem;
+    width: 1340px;
+    padding: 3rem 4rem;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 2rem;
+    margin: 0 auto;
+    @media screen and (max-width: 1444px) {
+      width: calc((30rem + 4rem) * 3);
+    }
+    @media screen and (max-width: 1110px) {
+      width: calc((30rem + 5rem) * 2);
+    }
+    @media screen and (max-width: 782px) {
+      width: calc((25rem + 5rem) * 2);
+    }
+    @media screen and (max-width: 681px) {
+      width: fit-content;
+      justify-content: center;
+    }
   }
 }
