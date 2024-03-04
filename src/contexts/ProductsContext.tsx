@@ -1,7 +1,7 @@
-import { Reducer, createContext, useContext, useEffect, useReducer, PropsWithChildren } from 'react';
-import { changePageQuery, removeDuplicates } from '../utils';
+import { PropsWithChildren, Reducer, createContext, useContext, useEffect, useReducer } from 'react';
 import axios from '../middleware/axios';
 import { DataIDs, IAction, IProductsContext, ISate } from '../types';
+import { changePageQuery, removeDuplicates } from '../utils';
 
 const INITIAL_STATE: ISate = {
   products: [],
@@ -10,9 +10,9 @@ const INITIAL_STATE: ISate = {
   error: null,
   currentPage: Number(new URLSearchParams(window.location.search).get('page')) || 1,
   filterBy: {
-    product: '',
-    brand: '',
-    price: 0,
+    product: new URLSearchParams(window.location.search).get('searchByName') || '',
+    brand: new URLSearchParams(window.location.search).get('searchByBrand') || '',
+    price: Number(new URLSearchParams(window.location.search).get('searchByPrice')) || 0,
   },
 };
 const LIMIT: number = 50;
@@ -71,19 +71,24 @@ const reducer: Reducer<ISate, IAction> = (state, action) => {
     case 'products/reset':
       return {
         ...INITIAL_STATE,
-        products: [...state.products],
+        products: [...state.products] || [],
         currentPage: state.currentPage,
+        filterBy: {
+          product: '',
+          brand: '',
+          price: 0,
+        },
       };
     default:
       return state;
   }
 };
-
-const ProductsProvider = ({ children }: PropsWithChildren<{}>) => {
+const ProductsProvider = ({ children }: PropsWithChildren) => {
   const [{ products, filteredProducts, isLoading, error, currentPage, filterBy }, dispatch] = useReducer(
     reducer,
     INITIAL_STATE
   );
+  console.log(currentPage);
   async function getProductsByID() {
     dispatch({ type: 'products/loading' });
     try {
@@ -150,36 +155,40 @@ const ProductsProvider = ({ children }: PropsWithChildren<{}>) => {
   };
   const searchProducts = () => {
     if (filterBy.brand.length > 0) {
-      changePageQuery(filterBy.brand);
+      changePageQuery('searchByBrand', filterBy.brand);
       return getFilteredProductsByID('brand');
     }
     if (filterBy.price > 0) {
-      changePageQuery(filterBy.price.toString());
+      changePageQuery('searchByPice', filterBy.price.toString());
       return getFilteredProductsByID('price');
     }
     if (filterBy.product.length > 0) {
-      changePageQuery(filterBy.product);
+      changePageQuery('searchByName', filterBy.product);
       return getFilteredProductsByID('product');
     }
   };
   const resetFilters = () => {
-    if (products.length === 0) return getProductsByID();
+    changePageQuery('page', 1);
     dispatch({ type: 'products/reset' });
-    changePageQuery(currentPage);
+    if (products.length === 0) return getProductsByID();
   };
 
   const nextPage = () => {
-    changePageQuery(currentPage + 1);
+    changePageQuery('page', currentPage + 1);
     dispatch({ type: 'products/nextPage' });
   };
   const previousPage = () => {
     if (Number(currentPage == 1)) return;
-    changePageQuery(currentPage - 1);
+    changePageQuery('page', currentPage - 1);
     dispatch({ type: 'products/previousPage' });
   };
 
   useEffect(() => {
-    getProductsByID();
+    if (filterBy.brand || filterBy.product || filterBy.price) {
+      searchProducts();
+    } else {
+      getProductsByID();
+    }
   }, [currentPage]);
 
   return (

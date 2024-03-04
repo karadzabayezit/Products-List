@@ -13,19 +13,13 @@ function getMD5Hash(PASSWORD: string) {
 function removeDuplicates(arr: IProduct[]) {
   return arr.filter((item, index, self) => index === self.findIndex((el: IProduct) => el.id === item.id));
 }
-const changePageQuery = (value: number | string) => {
+const changePageQuery = (query: string, value: number | string) => {
   const { protocol, host, pathname } = location;
   const path = `${host + pathname}`;
   if (history.pushState) {
-    if (typeof value === 'number') {
-      const newUrl = `${protocol}//${path}?page=${value}`;
-      history.pushState({ path: newUrl }, '', newUrl);
-    }
-    if (typeof value === 'string') {
-      const newUrl = `${protocol}//${path}?search=${value}`;
-      history.pushState({ path: newUrl }, '', newUrl);
-    }
+    const newUrl = `${protocol}//${path}?${query}=${value}`;
+    history.pushState({ path: newUrl }, '', newUrl);
   }
 };
 
-export { getMD5Hash, removeDuplicates, changePageQuery };
+export { changePageQuery, getMD5Hash, removeDuplicates };
